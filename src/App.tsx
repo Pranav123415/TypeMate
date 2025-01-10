@@ -43,7 +43,7 @@ function App() {
 
         <div className="fixed bottom-4 right-4 flex gap-4">
           <a
-            href="https://github.com/yourusername"
+            href="https://github.com/Pranav123415/TypeMate"
             target="_blank"
             rel="noopener noreferrer"
             className="p-3 bg-gray-800/30 backdrop-blur-sm rounded-full hover:bg-gray-700/30 transition-colors text-emerald-400 border border-gray-700/30"
@@ -53,7 +53,7 @@ function App() {
             </svg>
           </a>
           <a
-            href="https://linkedin.com/in/yourusername"
+            href="https://www.linkedin.com/in/pranav-kumar-b1a360245/"
             target="_blank"
             rel="noopener noreferrer"
             className="p-3 bg-gray-800/30 backdrop-blur-sm rounded-full hover:bg-gray-700/30 transition-colors text-emerald-400 border border-gray-700/30"
