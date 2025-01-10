@@ -17,11 +17,11 @@
 
 ## 🛠️ Technologies Used
 
-- **Frontend**: [React](https://reactjs.org/) (or specify your framework if different)
-- **Backend**: [Node.js](https://nodejs.org/), [Express](https://expressjs.com/)
-- **Database**: [MongoDB](https://www.mongodb.com/) (or specify your DB)
-- **Real-time Communication**: [Socket.IO](https://socket.io/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) (or specify CSS framework)
+- **Frontend**: React
+- **Backend**: Node.js
+- **Database**: MongoDB
+- **Real-time Communication**: Socket.IO
+- **Styling**: Tailwind CSS
 
 ---
 ## Enjoy Typing with Type Mate! 🚀
