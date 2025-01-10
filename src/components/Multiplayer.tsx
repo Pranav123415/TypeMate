@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Users, Plus, LogIn, Timer, Trophy } from 'lucide-react';
 import { useMultiplayerStore } from '../store/multiplayerStore';
-import { supabase } from '../utils/supabase';
 import { connectDB, collections } from '../utils/mongodb';
+import { Player } from '../types/mongodb';
 
 export const Multiplayer = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -12,6 +12,7 @@ export const Multiplayer = () => {
   const [roomCode, setRoomCode] = useState('');
   const [duration, setDuration] = useState(30);
   const [error, setError] = useState('');
+  const [players, setPlayers] = useState<Player[]>([]);
   
   const store = useMultiplayerStore();
 
@@ -32,7 +33,10 @@ export const Multiplayer = () => {
             id: p._id.toString(),
             name: p.name,
             progress: p.progress,
-            wpm: p.wpm
+            wpm: p.wpm,
+            accuracy: p.accuracy,
+            status: p.status,
+            isHost: p.isHost
           })));
         });
 

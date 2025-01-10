@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import { supabase } from '../utils/supabase';
 import { generateText } from '../utils/gemini';
 import { connectDB, collections } from '../utils/mongodb';
+import { ObjectId } from 'mongodb';
+import { generateRandomString } from '../utils/helpers';
 
 interface MultiplayerState {
   roomId: string | null;
@@ -27,6 +28,18 @@ interface MultiplayerStore extends MultiplayerState {
   setReady: () => Promise<void>;
   startGame: () => Promise<void>;
   resetState: () => void;
+  updatePlayers: (players: any[]) => void;
+}
+
+interface Player {
+  _id: ObjectId;
+  room_id: ObjectId;
+  name: string;
+  progress: number;
+  wpm: number;
+  accuracy: number;
+  status: 'waiting' | 'ready' | 'playing';
+  isHost: boolean;
 }
 
 export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
@@ -115,10 +128,10 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
   leaveRoom: async () => {
     const { roomId, playerId } = get();
     if (roomId && playerId) {
-      await supabase
-        .from('players')
-        .delete()
-        .eq('id', playerId);
+      const db = await connectDB();
+      await db.collection(collections.players).deleteOne({
+        _id: new ObjectId(playerId)
+      });
     }
     get().resetState();
   },
@@ -132,10 +145,11 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
     const wpm = Math.round((correctWords / timeElapsed) || 0);
     const accuracy = Math.round((correctWords / words.length) * 100);
 
-    await supabase
-      .from('players')
-      .update({ progress: wordIndex, wpm, accuracy })
-      .eq('id', playerId);
+    const db = await connectDB();
+    await db.collection(collections.players).updateOne(
+      { _id: new ObjectId(playerId) },
+      { $set: { progress: wordIndex, wpm, accuracy } }
+    );
 
     set({ currentWordIndex: wordIndex, currentInput: input, wpm, accuracy });
   },
@@ -144,23 +158,27 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
     const { playerId } = get();
     if (!playerId) return;
 
-    await supabase
-      .from('players')
-      .update({ status: 'ready' })
-      .eq('id', playerId);
+    const db = await connectDB();
+    await db.collection(collections.players).updateOne(
+      { _id: new ObjectId(playerId) },
+      { $set: { status: 'ready' } }
+    );
   },
 
   startGame: async () => {
     const { roomId } = get();
     if (!roomId) return;
 
-    await supabase
-      .from('rooms')
-      .update({ 
-        status: 'playing',
-        started_at: new Date().toISOString()
-      })
-      .eq('id', roomId);
+    const db = await connectDB();
+    await db.collection(collections.rooms).updateOne(
+      { _id: new ObjectId(roomId) },
+      { 
+        $set: { 
+          status: 'playing',
+          started_at: new Date()
+        }
+      }
+    );
 
     set({ status: 'playing', startTime: Date.now() });
   },
@@ -181,5 +199,9 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
       startTime: null,
       playerId: null
     });
+  },
+
+  updatePlayers: (players) => {
+    set({ players });
   }
 }));

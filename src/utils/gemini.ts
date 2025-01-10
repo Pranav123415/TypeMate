@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { config } from './config';
 
-const genAI = new GoogleGenerativeAI('AIzaSyBd2BClKUVcMCfG-FpWyjpunDgxuR2jYyo');
+const genAI = new GoogleGenerativeAI(config.geminiApiKey);
 
 export async function generateText(): Promise<string[]> {
   const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
